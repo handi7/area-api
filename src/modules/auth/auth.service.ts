@@ -40,7 +40,7 @@ export class AuthService {
           name: dto.name,
           email: dto.email,
           password: hashedPassword,
-          roleId: dto.role_id,
+          role_id: dto.role_id,
         },
         include: { role: { include: { permissions: { include: { permission: true } } } } },
       });

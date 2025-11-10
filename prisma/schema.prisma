@@ -16,15 +16,16 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  password  String    @map("password") // Prisma gak ada select: false, handle di service layer
-  roleId    Int
-  role      Role      @relation(fields: [roleId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime? @map("deleted_at")
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  password    String    @map("password") // Prisma gak ada select: false, handle di service layer
+  role_id     Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime? @map("deleted_at")
+
+  role      Role      @relation(fields: [role_id], references: [id])
 
   @@map("users")
 }
@@ -33,9 +34,9 @@ model Role {
   id          Int              @id @default(autoincrement())
   name        String           @unique
   users       User[]
-  permissions RolePermission[] // relasi ke join table
+  deleted_at  DateTime? @map("deleted_at")
 
-  deletedAt DateTime? @map("deleted_at")
+  permissions RolePermission[] // relasi ke join table
 
   @@map("roles")
 }
@@ -45,21 +46,69 @@ model Permission {
   name     PermissionsEnum    @unique
   category PermissionCategory
   label    String
+
   roles    RolePermission[] // relasi ke join table
 
   @@map("permissions")
 }
 
 model RolePermission {
-  roleId       Int
-  permissionId Int
+  role_id       Int
+  permission_id Int
 
-  role       Role       @relation(fields: [roleId], references: [id])
-  permission Permission @relation(fields: [permissionId], references: [id])
+  role       Role       @relation(fields: [role_id], references: [id])
+  permission Permission @relation(fields: [permission_id], references: [id])
 
-  @@id([roleId, permissionId])
+  @@id([role_id, permission_id])
   @@map("role_permissions")
 }
+
+model Province {
+  id         Int        @id @default(autoincrement())
+  code       String     @unique
+  name       String
+
+  regencies  Regency[]
+
+  @@map("provinces")
+}
+
+model Regency {
+  id            Int        @id @default(autoincrement())
+  code          String     @unique
+  name          String
+  province_id   Int
+
+  province    Province   @relation(fields: [province_id], references: [id])
+  districts   District[]
+
+  @@map("regencies")
+}
+
+model District {
+  id            Int        @id @default(autoincrement())
+  code          String     @unique
+  name          String
+  regency_id    Int
+
+  regency     Regency    @relation(fields: [regency_id], references: [id])
+  villages    Village[]
+
+  @@map("districts")
+}
+
+model Village {
+  id            Int        @id @default(autoincrement())
+  code          String     @unique
+  name          String
+  postal_code   String?    // ← tambahan kode pos
+  district_id   Int
+
+  district     District   @relation(fields: [district_id], references: [id])
+
+  @@map("villages")
+}
+
 
 // ENUMS
 enum PermissionsEnum {

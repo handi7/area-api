@@ -24,9 +24,9 @@
     "dev:d": "npx prisma generate && docker compose up --build",
     "dev-clean:d": "npx prisma generate && docker compose down --volumes --remove-orphans && docker compose build --no-cache && docker compose up",
     "prod:d": "DOCKER_TARGET=prod docker compose up --build",
-    "yarn:d": "docker exec -it nestjs_app yarn",
-    "generate:d": "docker exec -it nestjs_app npx prisma generate",
-    "migrate:d": "docker exec -it nestjs_app npx prisma migrate dev"
+    "yarn:d": "docker exec -it area_api yarn",
+    "generate:d": "docker exec -it area_api npx prisma generate",
+    "migrate:d": "docker exec -it area_api npx prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

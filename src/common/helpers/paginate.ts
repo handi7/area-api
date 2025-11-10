@@ -33,7 +33,9 @@ export async function paginate<T, Args extends PaginateArgs, R = T>(
     allowedSortBy = [],
   } = options;
 
-  const size = Number(options.size) || 10;
+  let size = Number(options.size) || 10;
+
+  if (size > 50) size = 50;
 
   const where = args.where || {};
 

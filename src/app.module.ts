@@ -7,6 +7,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { RoleModule } from "./modules/role/role.module";
 import { RedisModule } from "./services/redis/redis.module";
 import { PermissionModule } from "./modules/permission/permission.module";
+import { ProvinceModule } from './modules/province/province.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PermissionModule } from "./modules/permission/permission.module";
     RoleModule,
     RedisModule,
     PermissionModule,
+    ProvinceModule,
   ],
   controllers: [],
   providers: [PrismaService],

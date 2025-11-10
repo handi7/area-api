@@ -63,8 +63,11 @@ export class ResponseInterceptor implements NestInterceptor {
       responseData.message = data.message;
     }
 
-    if (data?.data && data?.meta) {
+    if (data?.data) {
       responseData.data = data.data;
+    }
+
+    if (data?.meta) {
       responseData.meta = data.meta;
     }
 
