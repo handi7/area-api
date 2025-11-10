@@ -4,37 +4,37 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateDistrictDto } from "./dto/create-district.dto";
-import { UpdateDistrictDto } from "./dto/update-district.dto";
+import { CreateVillageDto } from "./dto/create-village.dto";
+import { UpdateVillageDto } from "./dto/update-village.dto";
 import { PrismaService } from "src/services/prisma/prisma.service";
-import { RegencyService } from "../regency/regency.service";
-import { paginate, PaginateOptions } from "src/common/helpers/paginate";
+import { DistrictService } from "../district/district.service";
 import { GetAllQuery } from "src/common/dtos/get-all-query.dto";
+import { paginate, PaginateOptions } from "src/common/helpers/paginate";
 import { Prisma } from "prisma/client";
 
 @Injectable()
-export class DistrictService {
+export class VillageService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly regencyService: RegencyService,
+    private readonly districtService: DistrictService,
   ) {}
 
-  async create(dto: CreateDistrictDto) {
-    const regency = await this.regencyService.findOne(dto.regency_id);
+  async create(dto: CreateVillageDto) {
+    const district = await this.districtService.findOne(dto.district_id);
 
-    if (!regency) {
+    if (!district) {
       throw new BadRequestException({
-        message: "Kabupaten/Kota tidak ditemukan",
+        message: "Kecamatan tidak ditemukan",
         validation: [
           {
-            field: "regency_id",
-            messages: ["Kabupaten/Kota tidak ditemukan"],
+            field: "district_id",
+            messages: ["Kecamatan tidak ditemukan"],
           },
         ],
       });
     }
 
-    const duplicate = await this.prisma.district.findFirst({
+    const duplicate = await this.prisma.village.findFirst({
       where: {
         OR: [{ code: dto.code }, { name: dto.name }],
       },
@@ -44,7 +44,7 @@ export class DistrictService {
       const isCodeDuplicate = duplicate.code === dto.code;
       const field = isCodeDuplicate ? "code" : "name";
       const value = isCodeDuplicate ? dto.code : dto.name;
-      const label = isCodeDuplicate ? "Kode" : "Kecamatan";
+      const label = isCodeDuplicate ? "Kode" : "Kelurahan";
 
       throw new ConflictException({
         message: `${label} ${value} sudah terdaftar`,
@@ -57,18 +57,18 @@ export class DistrictService {
       });
     }
 
-    const district = await this.prisma.district.create({
+    const village = await this.prisma.village.create({
       data: {
         code: dto.code,
         name: dto.name,
-        regency: {
-          connect: { id: dto.regency_id },
+        district: {
+          connect: { id: dto.district_id },
         },
       },
-      include: { regency: true },
+      include: { district: true },
     });
 
-    return { message: "Kecamatan berhasil ditambahkan", data: district };
+    return { message: "Kelurahan berhasil ditambahkan", data: village };
   }
 
   async findAll(query: GetAllQuery) {
@@ -82,33 +82,33 @@ export class DistrictService {
       desc: query.desc === "true",
     };
 
-    const args: Prisma.DistrictFindManyArgs = {
-      include: { _count: true, regency: true },
+    const args: Prisma.VillageFindManyArgs = {
+      include: { district: true },
     };
 
-    return paginate(this.prisma.district, args, options);
+    return paginate(this.prisma.village, args, options);
   }
 
   async findOne(id: number) {
-    const district = await this.prisma.district.findUnique({
+    const village = await this.prisma.village.findUnique({
       where: { id },
-      include: { _count: true, regency: true },
+      include: { district: true },
     });
 
-    if (!district) {
-      throw new NotFoundException("Kecamatan tidak ditemukan");
+    if (!village) {
+      throw new NotFoundException("Kelurahan tidak ditemukan");
     }
 
-    return district;
+    return village;
   }
 
-  async update(id: number, dto: UpdateDistrictDto) {
-    const existing = await this.prisma.district.findFirst({
+  async update(id: number, dto: UpdateVillageDto) {
+    const existing = await this.prisma.village.findFirst({
       where: { id },
     });
 
     if (!existing) {
-      throw new NotFoundException("Kecamatan tidak ditemukan");
+      throw new NotFoundException("Kelurahan tidak ditemukan");
     }
 
     const args: Prisma.DistrictUpdateArgs = {
@@ -116,9 +116,9 @@ export class DistrictService {
       data: dto,
     };
 
-    if (dto.regency_id) {
+    if (dto.district_id) {
       args.data.regency = {
-        connect: { id: dto.regency_id },
+        connect: { id: dto.district_id },
       };
     }
 
@@ -126,6 +126,6 @@ export class DistrictService {
   }
 
   remove(id: number) {
-    return `This action removes a #${id} district`;
+    return `This action removes a #${id} village`;
   }
 }
