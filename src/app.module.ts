@@ -9,6 +9,7 @@ import { RedisModule } from "./services/redis/redis.module";
 import { PermissionModule } from "./modules/permission/permission.module";
 import { ProvinceModule } from './modules/province/province.module';
 import { RegencyModule } from './modules/regency/regency.module';
+import { DistrictModule } from './modules/district/district.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { RegencyModule } from './modules/regency/regency.module';
     PermissionModule,
     ProvinceModule,
     RegencyModule,
+    DistrictModule,
   ],
   controllers: [],
   providers: [PrismaService],

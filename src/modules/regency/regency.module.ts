@@ -7,5 +7,6 @@ import { ProvinceModule } from "../province/province.module";
   imports: [ProvinceModule],
   controllers: [RegencyController],
   providers: [RegencyService],
+  exports: [RegencyService],
 })
 export class RegencyModule {}

@@ -65,6 +65,7 @@ export class RegencyService {
           connect: { id: dto.province_id },
         },
       },
+      include: { province: true },
     });
 
     return { message: "Kabupaten/Kota berhasil ditambahkan", data: regency };
@@ -89,16 +90,16 @@ export class RegencyService {
   }
 
   async findOne(id: number) {
-    const province = await this.prisma.regency.findUnique({
+    const regency = await this.prisma.regency.findUnique({
       where: { id },
       include: { _count: true, province: true },
     });
 
-    if (!province) {
+    if (!regency) {
       throw new NotFoundException("Kabupaten/Kota tidak ditemukan");
     }
 
-    return province;
+    return regency;
   }
 
   async update(id: number, dto: UpdateRegencyDto) {
@@ -107,7 +108,7 @@ export class RegencyService {
     });
 
     if (!existing) {
-      throw new NotFoundException("Provinsi tidak ditemukan");
+      throw new NotFoundException("Kabupaten/Kota tidak ditemukan");
     }
 
     const args: Prisma.RegencyUpdateArgs = {
