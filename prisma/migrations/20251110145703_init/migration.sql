@@ -79,7 +79,6 @@ CREATE TABLE "villages" (
     "id" SERIAL NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "postal_code" TEXT,
     "district_id" INTEGER NOT NULL,
 
     CONSTRAINT "villages_pkey" PRIMARY KEY ("id")

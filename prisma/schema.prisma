@@ -101,7 +101,6 @@ model Village {
   id            Int        @id @default(autoincrement())
   code          String     @unique
   name          String
-  postal_code   String?    // ← tambahan kode pos
   district_id   Int
 
   district     District   @relation(fields: [district_id], references: [id])
